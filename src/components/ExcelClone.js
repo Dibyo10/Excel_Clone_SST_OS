@@ -88,6 +88,11 @@ const ExcelClone = () => {
                       value={data[rowIndex][colIndex]}
                       onChange={(e) => handleCellChange(rowIndex, colIndex, e.target.value)}
                       onClick={() => handleCellSelect(rowIndex, colIndex)}
+                      onDoubleClick={(e) => {
+                        handleCellSelect(rowIndex, colIndex);
+                        e.target.focus();
+                        e.target.select();
+                      }}
                     />
                   </td>
                 ))}
