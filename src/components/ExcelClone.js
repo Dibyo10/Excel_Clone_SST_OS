@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './Tooltip.css'; // Add tooltip styles
+import './Tooltip.css';
 
 const Tooltip = ({ text, position }) => {
   return (
@@ -11,13 +11,13 @@ const Tooltip = ({ text, position }) => {
 
 const ExcelClone = () => {
   const ROWS = 20;
-  const COLS = 26; // A to Z
+  const COLS = 26; // Columns A to Z
   const [data, setData] = useState(Array(ROWS).fill().map(() => Array(COLS).fill('')));
   const [selectedCell, setSelectedCell] = useState(null);
   const [formulaBarValue, setFormulaBarValue] = useState('');
-  const [error, setError] = useState(null); // For error messages
-  const [invalidCells, setInvalidCells] = useState(new Set()); // Track invalid cells
-  const [tooltipText, setTooltipText] = useState(''); // State for dynamic tooltip
+  const [error, setError] = useState(null);
+  const [invalidCells, setInvalidCells] = useState(new Set());
+  const [tooltipText, setTooltipText] = useState('');
 
   const getColumnLabel = (index) => String.fromCharCode(65 + index);
 
@@ -28,7 +28,6 @@ const ExcelClone = () => {
   };
 
   const isValidInput = (value) => {
-    // Allow only numeric input and limit length to 10 characters
     return /^[0-9]*$/.test(value) && value.length <= 10;
   };
 
@@ -48,8 +47,7 @@ const ExcelClone = () => {
       markCellAsInvalid(rowIndex, colIndex, true);
       return;
     }
-
-    setError(null); // Clear any previous error
+    setError(null);
     markCellAsInvalid(rowIndex, colIndex, false);
 
     const newData = [...data];
@@ -65,34 +63,23 @@ const ExcelClone = () => {
     let newRow = row;
     let newCol = col;
 
-    if (e.key === 'ArrowUp') {
-      newRow = Math.max(row - 1, 0);
-    } else if (e.key === 'ArrowDown') {
-      newRow = Math.min(row + 1, ROWS - 1);
-    } else if (e.key === 'ArrowLeft') {
-      newCol = Math.max(col - 1, 0);
-    } else if (e.key === 'ArrowRight') {
-      newCol = Math.min(col + 1, COLS - 1);
-    }
+    if (e.key === 'ArrowUp') newRow = Math.max(row - 1, 0);
+    if (e.key === 'ArrowDown') newRow = Math.min(row + 1, ROWS - 1);
+    if (e.key === 'ArrowLeft') newCol = Math.max(col - 1, 0);
+    if (e.key === 'ArrowRight') newCol = Math.min(col + 1, COLS - 1);
 
-    if (newRow !== row || newCol !== col) {
-      handleCellSelect(newRow, newCol);
-    }
+    if (newRow !== row || newCol !== col) handleCellSelect(newRow, newCol);
   };
 
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, [selectedCell]);
 
   const handleDoubleClick = (rowIndex, colIndex) => {
     handleCellSelect(rowIndex, colIndex);
     const cellInput = document.getElementById(`cell-${rowIndex}-${colIndex}`);
-    if (cellInput) {
-      cellInput.select();
-    }
+    if (cellInput) cellInput.select();
   };
 
   const Cell = ({ value, rowIndex, colIndex }) => {
@@ -111,7 +98,7 @@ const ExcelClone = () => {
           onMouseLeave={() => setShowTooltip(false)}
         >
           <input
-            id={`cell-${rowIndex}-${colIndex}`} // Unique ID for each cell
+            id={`cell-${rowIndex}-${colIndex}`}
             type="text"
             className={`w-full h-full px-2 py-1 border-none outline-none bg-transparent ${
               isInvalid ? 'bg-red-50' : ''
@@ -119,7 +106,7 @@ const ExcelClone = () => {
             value={value}
             onChange={(e) => handleCellChange(rowIndex, colIndex, e.target.value)}
             onClick={() => handleCellSelect(rowIndex, colIndex)}
-            onDoubleClick={() => handleDoubleClick(rowIndex, colIndex)} // Add double-click handler
+            onDoubleClick={() => handleDoubleClick(rowIndex, colIndex)}
           />
           {showTooltip && <Tooltip text={tooltipText} position="bottom" />}
         </div>
@@ -129,7 +116,6 @@ const ExcelClone = () => {
 
   return (
     <div className="flex flex-col h-screen">
-      {/* Top Bar */}
       <div className="flex items-center p-2 bg-gray-100">
         <div className="flex space-x-2 items-center">
           <div className="font-mono bg-white px-2 py-1 border border-gray-300">
@@ -141,51 +127,29 @@ const ExcelClone = () => {
             value={formulaBarValue}
             onChange={(e) => {
               const value = e.target.value;
-              if (selectedCell) {
-                handleCellChange(selectedCell.row, selectedCell.col, value);
-              }
+              if (selectedCell) handleCellChange(selectedCell.row, selectedCell.col, value);
               setFormulaBarValue(value);
             }}
           />
         </div>
         {error && <span className="text-red-500 text-sm ml-4">{error}</span>}
       </div>
-
-      {/* Spreadsheet */}
       <div className="flex-1 overflow-auto">
         <table className="border-collapse w-full">
           <thead>
             <tr>
-              <th className="w-12 bg-gradient-to-b from-slate-900 to-slate-800 text-white font-semibold border border-slate-700 
-                           shadow-sm sticky top-0 z-20"></th>
+              <th className="w-12 bg-gradient-to-b from-slate-900 to-slate-800 text-white font-semibold border border-slate-700"></th>
               {Array(COLS).fill().map((_, i) => (
-                <th 
-                  key={i} 
-                  className="w-24 bg-gradient-to-b from-slate-900 to-slate-800 text-white font-semibold px-3 py-2 
-                           border border-slate-700
-                           hover:bg-gradient-to-b hover:from-slate-800 hover:to-slate-700 transition-all duration-150
-                           shadow-sm text-center tracking-wide sticky top-0 z-10 text-sm"
-                >
-                  {getColumnLabel(i)}
-                </th>
+                <th key={i} className="w-24 bg-slate-900 text-white border">{getColumnLabel(i)}</th>
               ))}
             </tr>
           </thead>
           <tbody>
             {Array(ROWS).fill().map((_, rowIndex) => (
               <tr key={rowIndex}>
-                <td className="bg-gradient-to-r from-slate-900 to-slate-800 text-white font-medium border border-slate-700 
-                             text-center py-1.5 hover:from-slate-800 hover:to-slate-700 transition-all duration-150 
-                             sticky left-0 z-10 text-sm">
-                  {rowIndex + 1}
-                </td>
+                <td className="bg-slate-900 text-white">{rowIndex + 1}</td>
                 {Array(COLS).fill().map((_, colIndex) => (
-                  <Cell
-                    key={colIndex}
-                    value={data[rowIndex][colIndex]}
-                    rowIndex={rowIndex}
-                    colIndex={colIndex}
-                  />
+                  <Cell key={colIndex} value={data[rowIndex][colIndex]} rowIndex={rowIndex} colIndex={colIndex} />
                 ))}
               </tr>
             ))}
